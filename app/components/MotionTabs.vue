@@ -6,7 +6,17 @@ export interface TabItem {
 
 const props = defineProps<{
   tabs: TabItem[];
+  modelValue?: string;
 }>();
+
+const emit = defineEmits<{
+  "update:modelValue": [value: string];
+}>();
+
+const activeId = computed({
+  get: () => props.modelValue ?? props.tabs[0]?.id ?? "",
+  set: (value: string) => emit("update:modelValue", value),
+});
 </script>
 
 <template>
@@ -38,9 +48,12 @@ const props = defineProps<{
         role="tab"
         type="button"
         class="motion-tab-button relative z-10 flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-0 px-4 py-3 sm:px-7"
+        :aria-selected="activeId === tab.id"
+        @click="activeId = tab.id"
       >
         <span
           class="text-center text-sm font-medium leading-tight transition-colors sm:text-base text-neutral-300"
+          :class="activeId === tab.id ? 'text-neutral-900' : 'text-neutral-300'"
         >
           {{ tab.label }}
         </span>

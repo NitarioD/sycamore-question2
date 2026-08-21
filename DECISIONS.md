@@ -12,6 +12,10 @@ Instead of trying to fit the horizontal MotionTabs bar onto small screens, the h
 
 I knew going in that I didn't have time to get every section pixel-perfect against the real site, so I treated the hero section (and the other sections I did build) as "close enough" rather than an exact copy. I focused my time on getting the overall layout, spacing, and feel right, and let smaller details like exact fonts, image choices, and animation timing be approximations instead of trying to match the original down to the pixel.
 
+## Lighthouse
+
+![Lighthouse score](https://sycamore-question2.vercel.app/images/lighthouse.png)
+
 ## Where I used AI
 
 I used AI to help write and edit code throughout this project, especially in the navbar (`MotionTabs.vue`). I didn't just accept the first thing it gave me — I worked through it step by step, which is why the git history for the navbar is broken into small commits (set up refs, add the sliding indicator, add watchers, respect motion preferences, add vertical support, and so on) instead of one big commit.

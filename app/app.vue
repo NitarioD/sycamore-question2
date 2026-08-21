@@ -1,5 +1,7 @@
+<script setup lang="ts"></script>
+
 <template>
-  <div>
-    <h1 class="underline">Hello Typescript works</h1>
+  <div class="min-h-screen bg-slate-950 p-10">
+    <MotionTabs />
   </div>
 </template>

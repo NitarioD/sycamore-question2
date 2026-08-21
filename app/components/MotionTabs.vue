@@ -1,4 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+export interface TabItem {
+  id: string;
+  label: string;
+}
+
+const props = defineProps<{
+  tabs: TabItem[];
+}>();
+</script>
 
 <template>
   <div
@@ -23,46 +32,18 @@
         aria-hidden="true"
         style="top: 8px; height: 48px; left: 8px; width: 96px"
       />
-
       <button
-        type="button"
+        v-for="(tab, index) in tabs"
+        :key="tab.id"
         role="tab"
-        class="motion-tab-button relative z-10 flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-0 px-4 py-3 sm:px-7"
-      >
-        <span
-          class="text-center text-sm font-medium leading-tight transition-colors sm:text-base text-neutral-900"
-          >Home</span
-        >
-      </button>
-      <button
         type="button"
-        role="tab"
         class="motion-tab-button relative z-10 flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-0 px-4 py-3 sm:px-7"
       >
         <span
           class="text-center text-sm font-medium leading-tight transition-colors sm:text-base text-neutral-300"
-          >Services</span
         >
-      </button>
-      <button
-        type="button"
-        role="tab"
-        class="motion-tab-button relative z-10 flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-0 px-4 py-3 sm:px-7"
-      >
-        <span
-          class="text-center text-sm font-medium leading-tight transition-colors sm:text-base text-neutral-300"
-          >Blogs</span
-        >
-      </button>
-      <button
-        type="button"
-        role="tab"
-        class="motion-tab-button relative z-10 flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-0 px-4 py-3 sm:px-7"
-      >
-        <span
-          class="text-center text-sm font-medium leading-tight transition-colors sm:text-base text-neutral-300"
-          >Contact Us</span
-        >
+          {{ tab.label }}
+        </span>
       </button>
     </div>
   </div>

@@ -77,8 +77,24 @@ function scrollActiveIntoView() {
   });
 }
 
+let resizeObserver: ResizeObserver | null = null;
+
+watch(
+  () => [props.tabs, activeId.value, props.orientation] as const,
+  () => nextTick(updateIndicators),
+  { deep: true },
+);
+
 onMounted(() => {
   nextTick(updateIndicators);
+
+  if (containerRef.value) {
+    resizeObserver = new ResizeObserver(() => updateIndicators());
+    resizeObserver.observe(containerRef.value);
+  }
+});
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect();
 });
 </script>
 

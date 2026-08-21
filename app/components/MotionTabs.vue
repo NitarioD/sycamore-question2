@@ -17,6 +17,15 @@ const activeId = computed({
   get: () => props.modelValue ?? props.tabs[0]?.id ?? "",
   set: (value: string) => emit("update:modelValue", value),
 });
+
+const containerRef = ref<HTMLElement | null>(null);
+const tabRefs = ref<(HTMLButtonElement | null)[]>([]);
+function setTabRef(
+  el: Element | ComponentPublicInstance | null,
+  index: number,
+) {
+  tabRefs.value[index] = el instanceof HTMLButtonElement ? el : null;
+}
 </script>
 
 <template>
@@ -27,6 +36,7 @@ const activeId = computed({
     <div
       role="tablist"
       class="motion-tabs relative p-2 mx-auto flex h-16 w-fit min-w-min max-w-full items-center justify-between rounded-full sm:min-w-0"
+      ref="containerRef"
     >
       <div
         class="pointer-events-none absolute inset-0 rounded-[inherit] bg-linear-to-b from-neutral-700 to-neutral-800 shadow-[0_8px_32px_rgba(0,0,0,0.6),0_2px_8px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1),inset_0_-1px_2px_rgba(0,0,0,0.5)]"
@@ -45,6 +55,7 @@ const activeId = computed({
       <button
         v-for="(tab, index) in tabs"
         :key="tab.id"
+        :ref="(el) => setTabRef(el, index)"
         role="tab"
         type="button"
         class="motion-tab-button relative z-10 flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-0 px-4 py-3 sm:px-7"

@@ -13,5 +13,7 @@ const activeTab = ref("home");
 <template>
   <div class="min-h-screen bg-slate-950 p-10">
     <MotionTabs v-model="activeTab" :tabs="navTabs" />
+    <br />
+    <MotionTabs v-model="activeTab" :tabs="navTabs" orientation="vertical" />
   </div>
 </template>

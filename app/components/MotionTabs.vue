@@ -4,10 +4,18 @@ export interface TabItem {
   label: string;
 }
 
-const props = defineProps<{
-  tabs: TabItem[];
-  modelValue?: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    tabs: TabItem[];
+    modelValue?: string;
+    orientation?: "horizontal" | "vertical";
+  }>(),
+  {
+    orientation: "horizontal",
+  },
+);
+
+const isVertical = computed(() => props.orientation === "vertical");
 
 const emit = defineEmits<{
   "update:modelValue": [value: string];
@@ -44,6 +52,18 @@ function measureIndicator(index: number) {
   }
 
   const lastIndex = props.tabs.length - 1;
+
+  if (isVertical.value) {
+    const tabTop = tab.offsetTop;
+    const tabHeight = tab.offsetHeight;
+
+    if (index === 0) return { start: 8, size: tabHeight };
+    if (index === lastIndex) {
+      return { start: container.offsetHeight - tabHeight - 8, size: tabHeight };
+    }
+    return { start: tabTop + 8, size: tabHeight - 16 };
+  }
+
   const tabLeft = tab.offsetLeft;
   const tabWidth = tab.offsetWidth;
 
@@ -59,11 +79,16 @@ function updateIndicators() {
   if (index >= 0) {
     indicatorStyle.value = measureIndicator(index);
   }
+
   if (hoverIndex.value === null) {
-    const container = containerRef.value;
-    hoverIndicatorStyle.value = container
-      ? { start: 8, size: Math.max(container.offsetWidth - 16, 0) }
-      : { start: 0, size: 0 };
+    if (isVertical.value) {
+      hoverIndicatorStyle.value = { start: 0, size: 0 };
+    } else {
+      const container = containerRef.value;
+      hoverIndicatorStyle.value = container
+        ? { start: 8, size: Math.max(container.offsetWidth - 16, 0) }
+        : { start: 0, size: 0 };
+    }
   } else {
     hoverIndicatorStyle.value = measureIndicator(hoverIndex.value);
   }
@@ -135,12 +160,19 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="motion-tabs-scroll mx-auto w-full max-w-full px-4 sm:px-0"
+    class="motion-tabs-scroll mx-auto w-full max-w-full"
+    :class="isVertical ? '' : 'px-4 sm:px-0'"
     role="presentation"
   >
     <div
       role="tablist"
-      class="motion-tabs relative p-2 mx-auto flex h-16 w-fit min-w-min max-w-full items-center justify-between rounded-full sm:min-w-0"
+      :aria-orientation="orientation"
+      class="motion-tabs relative rounded-[1.75rem] p-2"
+      :class="
+        isVertical
+          ? 'is-vertical mx-auto flex w-full flex-col gap-1'
+          : 'mx-auto flex h-16 w-fit min-w-min max-w-full items-center justify-between rounded-full sm:min-w-0'
+      "
       ref="containerRef"
       @mouseleave="hoverIndex = null"
     >
@@ -155,24 +187,44 @@ onBeforeUnmount(() => {
       <div
         class="pointer-events-none absolute rounded-full bg-linear-to-b from-white/10 to-white/5 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2)] backdrop-blur-sm"
         aria-hidden="true"
-        :style="{
-          top: '8px',
-          height: '48px',
-          left: `${hoverIndicatorStyle.start}px`,
-          width: `${hoverIndicatorStyle.size}px`,
-          transition: transitionStyle,
-        }"
+        :style="
+          isVertical
+            ? {
+                left: '8px',
+                right: '8px',
+                top: `${hoverIndicatorStyle.start}px`,
+                height: `${hoverIndicatorStyle.size}px`,
+                transition: transitionStyle,
+              }
+            : {
+                top: '8px',
+                height: '48px',
+                left: `${hoverIndicatorStyle.start}px`,
+                width: `${hoverIndicatorStyle.size}px`,
+                transition: transitionStyle,
+              }
+        "
       />
       <div
         class="pointer-events-none absolute rounded-full bg-linear-to-b from-[#E8E8E8] via-[#C0C0C0] to-[#A0A0A0] shadow-[0_2px_8px_rgba(0,0,0,0.4),0_1px_2px_rgba(0,0,0,0.3),inset_0_2px_0_rgba(255,255,255,0.5),inset_0_-2px_0_rgba(255,255,255,0.3),inset_0_-8px_16px_rgba(255,255,255,0.2),inset_0_0_0_1px_rgba(255,255,255,0.4),inset_0_1px_4px_rgba(0,0,0,0.1)]"
         aria-hidden="true"
-        :style="{
-          top: '8px',
-          height: '48px',
-          left: `${indicatorStyle.start}px`,
-          width: `${indicatorStyle.size}px`,
-          transition: transitionStyle,
-        }"
+        :style="
+          isVertical
+            ? {
+                left: '8px',
+                right: '8px',
+                top: `${indicatorStyle.start}px`,
+                height: `${indicatorStyle.size}px`,
+                transition: transitionStyle,
+              }
+            : {
+                top: '8px',
+                height: '48px',
+                left: `${indicatorStyle.start}px`,
+                width: `${indicatorStyle.size}px`,
+                transition: transitionStyle,
+              }
+        "
       />
 
       <button
@@ -182,6 +234,7 @@ onBeforeUnmount(() => {
         role="tab"
         type="button"
         class="motion-tab-button relative z-10 flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-0 px-4 py-3 sm:px-7"
+        :class="isVertical ? 'w-full px-5 py-3.5' : 'px-4 py-3 sm:px-7'"
         :aria-selected="activeId === tab.id"
         @click="selectTab(tab.id)"
         @mouseenter="

@@ -1,1 +1,145 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap");
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-finance-dark: #1f2334;
+  --color-finance-dark-soft: #353948;
+  --color-finance-green: #44c486;
+  --color-finance-green-light: #b2eda1;
+  --color-finance-teal: #004d42;
+  --color-finance-blue: #0095ff;
+  --color-finance-card: #eceff1;
+  --color-finance-offwhite: #ecf1f1;
+  --color-finance-muted: #444444;
+  --color-finance-ink: #111111;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: #fff;
+  color: var(--color-finance-ink);
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+[data-reveal-delay="1"] {
+  transition-delay: 0.12s;
+}
+
+[data-reveal-delay="2"] {
+  transition-delay: 0.24s;
+}
+
+[data-reveal-delay="3"] {
+  transition-delay: 0.36s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+@keyframes finance-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes finance-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes finance-line-load {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes finance-line-draw {
+  0% {
+    stroke-dashoffset: 900;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-float {
+  animation: finance-float 5s ease-in-out infinite;
+}
+
+.animate-marquee {
+  animation: finance-marquee 26s linear infinite;
+}
+
+.animate-marquee-slow {
+  animation: finance-marquee 34s linear infinite;
+}
+
+.animate-line-draw {
+  stroke-dasharray: 900;
+  animation: finance-line-draw 2.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-line-load {
+  width: 0;
+  animation: finance-line-load 3s ease-in-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-marquee,
+  .animate-marquee-slow {
+    animation: none;
+  }
+
+  .animate-line-draw {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+
+  .animate-line-load {
+    width: 100%;
+    animation: none;
+  }
+}

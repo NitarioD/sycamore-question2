@@ -1,19 +1,29 @@
 <script setup lang="ts">
-const navTabs = [
-  { id: "home", label: "Home" },
-  { id: "pages", label: "Pages" },
-  { id: "services", label: "Services" },
-  { id: "blogs", label: "Blogs" },
-  { id: "contact", label: "Contact Us" },
-];
-
 const activeTab = ref("home");
+
+const sectionMap: Record<string, string> = {
+  home: "#home",
+  contact: "#contact",
+};
+
+function scrollToSection(id: string) {
+  const target = document.querySelector(sectionMap[id] ?? "#home");
+  target?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+useReveal();
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-950 p-10">
-    <MotionTabs v-model="activeTab" :tabs="navTabs" />
-    <br />
-    <MotionTabs v-model="activeTab" :tabs="navTabs" orientation="vertical" />
+  <div class="min-h-screen bg-white">
+    <FinanceHeader v-model="activeTab" @navigate="scrollToSection" />
+    <main>
+      <FinanceHero />
+      <FinanceHighlights />
+      <FinanceFoundations />
+      <FinanceWhyChoose />
+      <FinanceTestimonials />
+    </main>
+    <FinanceFooter />
   </div>
 </template>

@@ -83,7 +83,7 @@ function scrollActiveIntoView() {
   if (index < 0) return;
 
   tabRefs.value[index]?.scrollIntoView({
-    behavior: "smooth",
+    behavior: prefersReducedMotion.value ? "auto" : "smooth",
     block: "nearest",
     inline: "nearest",
   });
@@ -99,7 +99,26 @@ watch(
 
 watch(hoverIndex, () => nextTick(updateIndicators));
 
+const prefersReducedMotion = ref(false);
+
+const transitionStyle = computed(() => {
+  if (!indicatorsReady.value || prefersReducedMotion.value) return "none";
+  return ["left", "width"]
+    .map((prop) => `${prop} 0.45s cubic-bezier(0.34, 1.25, 0.64, 1)`)
+    .join(", ");
+});
+
+let motionMediaQuery: MediaQueryList | null = null;
+
+function onMotionPreferenceChange(event: MediaQueryListEvent) {
+  prefersReducedMotion.value = event.matches;
+}
+
 onMounted(() => {
+  motionMediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  prefersReducedMotion.value = motionMediaQuery.matches;
+  motionMediaQuery.addEventListener("change", onMotionPreferenceChange);
+
   nextTick(updateIndicators);
 
   if (containerRef.value) {
@@ -108,6 +127,8 @@ onMounted(() => {
   }
 });
 onBeforeUnmount(() => {
+  motionMediaQuery?.removeEventListener("change", onMotionPreferenceChange);
+
   resizeObserver?.disconnect();
 });
 </script>
@@ -139,6 +160,7 @@ onBeforeUnmount(() => {
           height: '48px',
           left: `${hoverIndicatorStyle.start}px`,
           width: `${hoverIndicatorStyle.size}px`,
+          transition: transitionStyle,
         }"
       />
       <div
@@ -149,6 +171,7 @@ onBeforeUnmount(() => {
           height: '48px',
           left: `${indicatorStyle.start}px`,
           width: `${indicatorStyle.size}px`,
+          transition: transitionStyle,
         }"
       />
 
